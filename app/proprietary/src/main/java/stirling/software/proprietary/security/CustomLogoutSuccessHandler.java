@@ -65,15 +65,6 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 
         if (!response.isCommitted()) {
             if (authentication != null) {
-                // Check for JWT-based authentication and extract authType claim
-                String authType;
-                if (authentication instanceof JwtAuthenticationToken jwtAuth) {
-                    authType =
-                            (String) jwtAuth.getToken().getClaims().getOrDefault("authType", null);
-
-                    log.debug("JWT-based logout detected with authType: {}", authType);
-                }
-
                 if (authentication instanceof OAuth2AuthenticationToken oAuthToken) {
                     log.info("OAuth2 logout via JWT - attempting OIDC logout");
                     getAuthRedirect(request, response, oAuthToken);
@@ -81,7 +72,7 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
                     getAuthRedirect(request, response, samlAuthentication);
                 } else if (authentication
                         instanceof JwtAuthenticationToken jwtAuthenticationToken) {
-                    getAuthRedirect(request, response, jwtAuthenticationToken);
+                    getAuthRedirect(request, response);
                 } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
                     // Handle Username/Password logout
                     getRedirectStrategy().sendRedirect(request, response, LOGOUT_PATH);
@@ -186,10 +177,7 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
     }
 
     // Redirect for JWT-based OAuth2 authentication logout
-    private void getAuthRedirect(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            JwtAuthenticationToken jwtAuthenticationToken)
+    private void getAuthRedirect(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         OAUTH2 oauth = securityProperties.getOauth2();
         String path = checkForErrors(request);
@@ -213,18 +201,8 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
             clientId = oauth.getClientId();
         }
 
-        // Fallback: extract issuer from JWT token if not found in configuration
-        if (issuer == null) {
-            var jwtIssuer = jwtAuthenticationToken.getToken().getIssuer();
-            if (jwtIssuer != null) {
-                issuer = jwtIssuer.toString();
-                log.debug("Using issuer from JWT token: {}", issuer);
-            }
-        }
-
         String endSessionEndpoint = getEndSessionEndpoint(oauth, issuer);
 
-        // If no endpoint found, try Keycloak fallback
         if (endSessionEndpoint == null && issuer != null) {
             endSessionEndpoint = issuer + "/protocol/openid-connect/logout";
             log.debug("Using Keycloak fallback logout path: {}", endSessionEndpoint);
@@ -242,7 +220,7 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
             logoutUrlBuilder.append("post_logout_redirect_uri=").append(encodedRedirectUri);
 
             String logoutUrl = logoutUrlBuilder.toString();
-            log.info("JWT-based OAuth2 logout URL: {}", logoutUrl);
+            log.debug("JWT-based OAuth2 logout URL: {}", logoutUrl);
 
             // Return JSON for API requests, redirect for browser requests
             if (isApi) {

@@ -1009,8 +1009,8 @@ class CustomLogoutSuccessHandlerTest {
         when(request.getHeader("X-Requested-With")).thenReturn(null);
         when(response.getWriter()).thenReturn(printWriter);
 
-        when(jwtAuth.getToken()).thenReturn(jwt);
-        when(jwt.getClaims()).thenReturn(Map.of("authType", "OAUTH2"));
+        lenient().when(jwtAuth.getToken()).thenReturn(jwt);
+        lenient().when(jwt.getClaims()).thenReturn(Map.of("authType", "OAUTH2"));
 
         when(securityProperties.getOauth2()).thenReturn(oauth);
         when(oauth.getClient()).thenReturn(client);
@@ -1067,8 +1067,8 @@ class CustomLogoutSuccessHandlerTest {
         when(request.getHeader("X-Requested-With")).thenReturn("XMLHttpRequest"); // XHR request
         when(response.getWriter()).thenReturn(printWriter);
 
-        when(jwtAuth.getToken()).thenReturn(jwt);
-        when(jwt.getClaims()).thenReturn(Map.of("authType", "OAUTH2"));
+        lenient().when(jwtAuth.getToken()).thenReturn(jwt);
+        lenient().when(jwt.getClaims()).thenReturn(Map.of("authType", "OAUTH2"));
 
         when(securityProperties.getOauth2()).thenReturn(oauth);
         when(oauth.getClient()).thenReturn(client);
@@ -1115,8 +1115,8 @@ class CustomLogoutSuccessHandlerTest {
         when(request.getHeader("Accept")).thenReturn("text/html"); // Browser request
         when(request.getHeader("X-Requested-With")).thenReturn(null);
 
-        when(jwtAuth.getToken()).thenReturn(jwt);
-        when(jwt.getClaims()).thenReturn(Map.of("authType", "OAUTH2"));
+        lenient().when(jwtAuth.getToken()).thenReturn(jwt);
+        lenient().when(jwt.getClaims()).thenReturn(Map.of("authType", "OAUTH2"));
 
         when(securityProperties.getOauth2()).thenReturn(oauth);
         when(oauth.getClient()).thenReturn(client);
@@ -1164,8 +1164,8 @@ class CustomLogoutSuccessHandlerTest {
         when(request.getHeader("X-Requested-With")).thenReturn(null);
         when(response.getWriter()).thenReturn(printWriter);
 
-        when(jwtAuth.getToken()).thenReturn(jwt);
-        when(jwt.getClaims()).thenReturn(Map.of("authType", "OAUTH2"));
+        lenient().when(jwtAuth.getToken()).thenReturn(jwt);
+        lenient().when(jwt.getClaims()).thenReturn(Map.of("authType", "OAUTH2"));
 
         when(securityProperties.getOauth2()).thenReturn(oauth);
         when(oauth.getClient()).thenReturn(client);
